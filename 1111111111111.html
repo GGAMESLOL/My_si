@@ -1,0 +1,263 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>CumПания</title>
+
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
+
+<style>
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  background: #808080;
+  font-family: Arial, sans-serif;
+}
+
+/* ФОН */
+@keyframes gradientFlow {
+  0% { background-position: 0% 0%; }
+  100% { background-position: 100% 100%; }
+}
+
+/* HEADER */
+header {
+  position: relative;
+  color: #fff;
+  text-align: center;
+  padding: 100px 0;
+  font-size: 96px;
+
+  background: linear-gradient(135deg,#000,#0f0f0f,#1a1a1a,#0f0f0f,#000);
+  background-size: 200% 200%;
+  animation: gradientFlow 6s ease-in-out infinite alternate;
+
+  text-shadow:
+    0 0 10px #fff,
+    0 0 20px #fff,
+    0 0 40px #fff,
+    0 0 80px rgba(255,255,255,0.6);
+}
+
+/* 🔥 ИДЕАЛЬНАЯ ЛИНИЯ (БЕЗ АРТЕФАКТОВ) */
+header::after {
+  content: "";
+  position: absolute;
+  left: 0;
+  bottom: 0;
+  width: 100%;
+  height: 2px;
+
+  background: #fff;
+
+  box-shadow:
+    0 0 8px #fff,
+    0 0 16px #fff;
+}
+
+/* СЕКЦИЯ */
+.cards-section {
+  background: linear-gradient(135deg,#000,#121212,#1f1f1f,#121212,#000);
+  background-size: 200% 200%;
+  animation: gradientFlow 6s ease-in-out infinite alternate;
+
+  padding: 80px 20px;
+  min-height: 150vh;
+}
+
+/* КАРТОЧКИ */
+.container {
+  display: flex;
+  justify-content: center;
+  gap: 40px;
+  max-width: 1000px;
+  margin: 0 auto;
+}
+
+.card {
+  flex: 0 0 200px;
+  height: 200px;
+  border: 2px solid #fff;
+  border-radius: 12px;
+  overflow: hidden;
+  cursor: pointer;
+
+  box-shadow: 0 0 15px rgba(255,255,255,0.5);
+  transition: 0.3s;
+}
+
+.card img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.card:hover {
+  transform: scale(1.05);
+}
+
+/* ТЕКСТ */
+.text-container {
+  max-width: 1000px;
+  margin: 40px auto 0;
+  min-height: 120px;
+}
+
+.display {
+  color: #fff;
+  font-size: 22px;
+
+  font-family: 'JetBrains Mono', monospace;
+  letter-spacing: 1px;
+
+  text-shadow:
+    0 0 5px rgba(255,255,255,0.6),
+    0 0 10px rgba(255,255,255,0.4);
+}
+
+/* КУРСОР */
+.cursor {
+  display: inline-block;
+  width: 10px;
+  height: 1em;
+  background: #fff;
+  margin-left: 3px;
+}
+
+.blink .cursor {
+  animation: blink 1s infinite;
+}
+
+@keyframes blink {
+  0%, 50%, 100% { opacity: 1; }
+  25%, 75% { opacity: 0; }
+}
+</style>
+</head>
+
+<body>
+
+<header>CumПания</header>
+
+<div class="cards-section">
+
+  <div class="container">
+    <div class="card" onmouseenter="changeText(0)">
+      <img src="Alex.jpg">
+    </div>
+    <div class="card" onmouseenter="changeText(1)">
+      <img src="Leha Gitler.jpg">
+    </div>
+    <div class="card" onmouseenter="changeText(2)">
+      <img src="img3.jpg">
+    </div>
+    <div class="card" onmouseenter="changeText(3)">
+      <img src="img4.jpg">
+    </div>
+  </div>
+
+  <div class="text-container">
+    <div class="display" id="display">
+      <span id="text"></span><span class="cursor"></span>
+    </div>
+  </div>
+
+</div>
+
+<script>
+const texts = [
+  "Алекс, так же известный как военный преступник под псевдонимом Насруло Танджмахал.",
+  "Алексей Гитхер, мало что известно...",
+  "ТЕКСТ 3",
+  "ТЕКСТ 4"
+];
+
+let typingInterval = null;
+let eraseInterval = null;
+let currentIndex = -1;
+let isAnimating = false;
+
+function stopAll() {
+  clearInterval(typingInterval);
+  clearInterval(eraseInterval);
+}
+
+function typeText(text) {
+  const el = document.getElementById("text");
+  const display = document.getElementById("display");
+
+  stopAll();
+  isAnimating = true;
+
+  display.classList.remove("blink");
+  el.textContent = "";
+
+  let i = 0;
+
+  typingInterval = setInterval(() => {
+    if (i < text.length) {
+      el.textContent += text[i];
+      i++;
+    } else {
+      clearInterval(typingInterval);
+      display.classList.add("blink");
+      isAnimating = false;
+    }
+  }, 30);
+}
+
+function eraseText(callback) {
+  const el = document.getElementById("text");
+  const display = document.getElementById("display");
+
+  stopAll();
+  isAnimating = true;
+
+  display.classList.remove("blink");
+
+  let text = el.textContent;
+  let i = text.length;
+
+  eraseInterval = setInterval(() => {
+    if (i > 0) {
+      el.textContent = text.substring(0, i - 1);
+      i--;
+    } else {
+      clearInterval(eraseInterval);
+      isAnimating = false;
+      callback();
+    }
+  }, 5);
+}
+
+function changeText(index) {
+  if (index === currentIndex) return;
+
+  currentIndex = index;
+
+  const el = document.getElementById("text");
+
+  if (isAnimating) {
+    stopAll();
+    el.textContent = "";
+    typeText(texts[index]);
+    return;
+  }
+
+  if (el.textContent.length > 0) {
+    eraseText(() => {
+      typeText(texts[index]);
+    });
+  } else {
+    typeText(texts[index]);
+  }
+}
+</script>
+
+</body>
+</html>
